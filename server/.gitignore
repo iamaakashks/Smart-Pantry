@@ -1,0 +1,35 @@
+# Node modules (dependencies)
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.*         # e.g., .env.local, .env.development
+
+# Build output (if using TypeScript or build tools)
+dist/
+build/
+
+# OS-generated files
+.DS_Store      # macOS
+Thumbs.db      # Windows
+
+# Editor/IDE folders
+.vscode/
+.idea/
+
+# Optional: test coverage
+coverage/
+
+# Optional: database local files (e.g., SQLite, Realm)
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.realm
