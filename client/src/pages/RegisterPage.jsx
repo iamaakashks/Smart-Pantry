@@ -1,10 +1,10 @@
-import React, {useState} from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { registerUser } from '../features/auth/authSlice'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../features/auth/authSlice';
+import { useNavigate, Link } from 'react-router-dom';
 
-const RegisterPage = ()=>{
-    const [username, setUsername] = useState('');
+const RegisterPage = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -15,14 +15,12 @@ const RegisterPage = ()=>{
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(registerUser({ username, email, password }))
-      .unwrap() // Use .unwrap() to handle promise rejection/fulfillment easily
+      .unwrap()
       .then(() => {
-        // On successful registration, navigate to the login page
         alert('Registration successful! Please log in.');
         navigate('/login');
       })
       .catch((err) => {
-        // unwrap() will automatically throw the rejected value
         console.error('Failed to register:', err);
       });
   };
@@ -64,18 +62,21 @@ const RegisterPage = ()=>{
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
-          disabled={status === 'loading'}
-        >
-          {status === 'loading' ? 'Registering...' : 'Register'}
-        </button>
-        {/* We display the error message from the Redux store */}
+        <button type="submit" className="w-full py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-300" disabled={status === 'loading'}>{status === 'loading' ? 'Registering...' : 'Register'}</button>
+
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-blue-600 hover:underline">
+              Login here
+            </Link>
+          </p>
+        </div>
+
         {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
       </form>
     </div>
   );
-}
+};
 
 export default RegisterPage;
