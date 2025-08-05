@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../features/auth/authSlice';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ const LoginPage = () => {
     dispatch(loginUser({ email, password }))
       .unwrap()
       .then(() => {
-        navigate('/pantry'); // Redirect on successful login
+        navigate('/pantry');
       })
       .catch((err) => {
         console.error('Failed to login:', err);
