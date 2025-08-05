@@ -1,48 +1,67 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import {
+  fetchPantryItems,
+  addPantryItem,
+  deletePantryItem,
+} from '../features/pantry/pantrySlice';
+import { fetchRecipes } from '../features/recipes/recipeSlice';
+import { logout } from '../features/auth/authSlice';
+import RecipeCard from '../components/RecipeCard';
 
-const getAuthHeaders = (token) => ({
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
+const PantryPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-export const fetchRecipes = createAsyncThunk(
-  'recipes/fetchRecipes',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const { token } = getState().auth;
-      const response = await axios.get('https://smart-pantry-op6d.onrender.com/api/recipes', getAuthHeaders(token));
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
+  // Get the token from the auth state
+  const { token } = useSelector((state) => state.auth);
+  
+  const { items: pantryItems, status: pantryStatus } = useSelector((state) => state.pantry);
+  const { user } = useSelector((state) => state.auth);
+  const { recipes, status: recipeStatus, error: recipeError } = useSelector((state) => state.recipes);
+
+  const [itemName, setItemName] = useState('');
+  const [itemQuantity, setItemQuantity] = useState('');
+
+  // Pass the token when fetching items
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchPantryItems(token));
     }
-  }
-);
+  }, [dispatch, token]);
 
-const recipeSlice = createSlice({
-  name: 'recipes',
-  initialState: {
-    recipes: [],
-    status: 'idle',
-    error: null,
-  },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchRecipes.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(fetchRecipes.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.recipes = action.payload;
-      })
-      .addCase(fetchRecipes.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload.message;
-      });
-  },
-});
+  // Pass the token when adding an item
+  const handleAddItem = (e) => {
+    e.preventDefault();
+    if (!itemName) return;
+    const itemData = { name: itemName, quantity: itemQuantity || '1' };
+    dispatch(addPantryItem({ itemData, token }));
+    setItemName('');
+    setItemQuantity('');
+  };
 
-export default recipeSlice.reducer;
+  // Pass the token when deleting an item
+  const handleDeleteItem = (itemId) => {
+    dispatch(deletePantryItem({ itemId, token }));
+  };
+  
+  // Pass the token when finding recipes
+  const handleFindRecipes = () => {
+    dispatch(fetchRecipes(token));
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  };
+
+  // ... the rest of your JSX remains the same
+  return (
+    <div className="min-h-screen bg-gray-50">
+        {/* Header, Add Form, Pantry List, and Recipe Sections */}
+    </div>
+  );
+};
+
+export default PantryPage;

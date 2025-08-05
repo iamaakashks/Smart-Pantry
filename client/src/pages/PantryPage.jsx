@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -6,43 +6,49 @@ import {
   addPantryItem,
   deletePantryItem,
 } from '../features/pantry/pantrySlice';
-import { logout } from '../features/auth/authSlice';
 import { fetchRecipes } from '../features/recipes/recipeSlice';
+import { logout } from '../features/auth/authSlice';
 import RecipeCard from '../components/RecipeCard';
 
 const PantryPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { token } = useSelector((state) => state.auth);
+  
   const { items: pantryItems, status: pantryStatus } = useSelector((state) => state.pantry);
-  const { recipes, status: recipeStatus, error: recipeError } = useSelector((state) => state.recipes);
   const { user } = useSelector((state) => state.auth);
+  const { recipes, status: recipeStatus, error: recipeError } = useSelector((state) => state.recipes);
 
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState('');
 
   useEffect(() => {
-    dispatch(fetchPantryItems());
-  }, [dispatch]);
+    if (token) {
+      dispatch(fetchPantryItems(token));
+    }
+  }, [dispatch, token]);
 
   const handleAddItem = (e) => {
     e.preventDefault();
     if (!itemName) return;
-    dispatch(addPantryItem({ name: itemName, quantity: itemQuantity || '1 unit' }));
+    const itemData = { name: itemName, quantity: itemQuantity || '1' };
+    dispatch(addPantryItem({ itemData, token }));
     setItemName('');
     setItemQuantity('');
   };
 
-  const handleDeleteItem = (id) => {
-    dispatch(deletePantryItem(id));
+  const handleDeleteItem = (itemId) => {
+    dispatch(deletePantryItem({ itemId, token }));
+  };
+  
+  const handleFindRecipes = () => {
+    dispatch(fetchRecipes(token));
   };
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
-  };
-
-  const handleFindRecipes = () => {
-    dispatch(fetchRecipes());
   };
 
   return (
