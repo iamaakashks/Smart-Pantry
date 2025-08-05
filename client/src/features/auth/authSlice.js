@@ -17,7 +17,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('http://localhost:5001/api/users/login', userData);
+      const response = await axios.post('https://smart-pantry-op6d.onrender.com/api/users/login', userData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user',JSON.stringify(response.data.user));
       return response.data;

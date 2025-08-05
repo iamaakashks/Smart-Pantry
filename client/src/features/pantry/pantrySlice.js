@@ -12,7 +12,7 @@ export const fetchPantryItems = createAsyncThunk(
     async (_, {getState, rejectWithValue}) =>{
         try{
             const {token} = getState().auth;
-            const response = await axios.get('http://localhost:5001/api/pantry', getAuthHeaders(token));
+            const response = await axios.get('https://smart-pantry-op6d.onrender.com/api/pantry', getAuthHeaders(token));
             return response.data;
         }catch(err){
             return rejectWithValue(err.response.data);
