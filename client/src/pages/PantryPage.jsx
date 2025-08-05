@@ -15,7 +15,6 @@ const PantryPage = () => {
   const navigate = useNavigate();
 
   const { token } = useSelector((state) => state.auth);
-  
   const { items: pantryItems, status: pantryStatus } = useSelector((state) => state.pantry);
   const { user } = useSelector((state) => state.auth);
   const { recipes, status: recipeStatus, error: recipeError } = useSelector((state) => state.recipes);
@@ -52,11 +51,18 @@ const PantryPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-600">
-      <header className="bg-yellow-100 shadow-sm">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-gray-900">{user?.username}'s Pantry</h1>
-          <button onClick={handleLogout} className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">Logout</button>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {user?.username}'s Pantry
+          </h1>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+          >
+            Logout
+          </button>
         </div>
       </header>
 
@@ -69,7 +75,7 @@ const PantryPage = () => {
               placeholder="Item name (e.g., Chicken Breast)"
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
-              className="flex-grow px-3 py-2 border rounded-lg focus:outline-none"
+              className="flex-grow px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
             <input
@@ -77,49 +83,56 @@ const PantryPage = () => {
               placeholder="Quantity (e.g., 500g)"
               value={itemQuantity}
               onChange={(e) => setItemQuantity(e.target.value)}
-              className="sm:w-48 px-3 py-2 border rounded-lg focus:outline-none"
+              className="sm:w-48 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button type="submit" className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700" >Add Item</button>
+            <button
+              type="submit"
+              className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+            >
+              Add Item
+            </button>
           </form>
         </div>
 
-        <div className="bg-yellow-100 rounded-lg shadow">
+        <div className="bg-white rounded-lg shadow">
           <ul className="divide-y divide-gray-200">
             {pantryStatus === 'loading' && <li className="p-4 text-center">Loading items...</li>}
             {pantryStatus === 'succeeded' && pantryItems.length === 0 && (
-              <li className="p-4 text-center text-gray-500">
-                Your pantry is empty. Add an item to get started!
-              </li>
+              <li className="p-4 text-center text-gray-500">Your pantry is empty. Add an item to get started!</li>
             )}
             {pantryStatus === 'succeeded' &&
               pantryItems.map((item) => (
                 <li key={item._id} className="p-4 flex justify-between items-center">
                   <div>
                     <p className="font-semibold text-lg">{item.name}</p>
-                    <p className="text-gray-500">Quantity: {item.quantity}</p>
+                    <p className="text-gray-500">{item.quantity}</p>
                   </div>
-                  <button onClick={() => handleDeleteItem(item._id)} className="px-4 py-2 text-sm rounded-md text-white bg-red-600 hover:bg-red-700 font-medium">Remove</button>
+                  <button
+                    onClick={() => handleDeleteItem(item._id)}
+                    className="text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Delete
+                  </button>
                 </li>
               ))}
           </ul>
         </div>
-
+        
         <div className="mt-12 text-center">
-          <button onClick={handleFindRecipes} disabled={pantryItems.length === 0 || recipeStatus === 'loading'} className="px-8 py-3 text-lg font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed" >
+          <button
+            onClick={handleFindRecipes}
+            disabled={pantryItems.length === 0 || recipeStatus === 'loading'}
+            className="px-8 py-3 text-lg font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
             {recipeStatus === 'loading' ? 'Finding...' : 'Find Recipes with my Ingredients!'}
           </button>
         </div>
 
         <div className="mt-8">
           {recipeStatus === 'failed' && <p className="text-center text-red-500">{recipeError}</p>}
-          {recipeStatus === 'succeeded' && recipes.length === 0 && (
-            <p className="text-center text-gray-500">
-              Click the button above to find recipes!
-            </p>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recipes.map((recipe) => (
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recipes.map(recipe => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
