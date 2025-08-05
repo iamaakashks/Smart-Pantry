@@ -9,10 +9,18 @@ router.get('/', protect, async (req, res)=>{
 });
 
 router.post('/', protect, async (req, res)=>{
-    const {name, quantity} = req.body;
-    const newItem = new PantryItem({name, quantity, user: req.user.id});
-    const savedItem = await newItem.save();
-    res.status(201).json(savedItem);
+    try{
+        const {name, quantity} = req.body;
+        if(!name){
+            return res.status(400).json({message: "Item name is required"})
+        }
+        const newItem = new PantryItem({name, quantity: quantity || '1 unit', user: req.user.id});
+        const savedItem = await newItem.save();
+        res.status(201).json(savedItem);
+    }catch(err){
+        res.status(500).json({message: "server error"});
+    }
+    
 })
 
 router.delete('/:id', protect, async (req, res)=>{
